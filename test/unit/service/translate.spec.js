@@ -1868,12 +1868,18 @@ describe('pascalprecht.translate', function () {
         };
 
         // defining the actual interpolate function
-        translateInterpolator.interpolate = function (string, interpolateParams) {
+        translateInterpolator.interpolate = function (string, interpolateParams, context, strategy, translationId) {
+          var text;
           if ($locale === 'de') {
-            return 'foo';
+            text = 'foo';
           } else {
-            return 'custom interpolation';
+            text = 'custom interpolation';
           }
+
+          return {
+            text: text,
+            translationId: translationId
+          };
         };
 
         return translateInterpolator;
@@ -1929,7 +1935,8 @@ describe('pascalprecht.translate', function () {
       });
 
       $rootScope.$digest();
-      expect(value).toEqual('custom interpolation');
+      expect(value.text).toEqual('custom interpolation');
+      expect(value.translationId).toEqual('FOO');
     });
 
     it('should use fallback language, if configured', function () {
@@ -1945,7 +1952,8 @@ describe('pascalprecht.translate', function () {
         deferred.resolve(translation);
       });
       $rootScope.$digest();
-      expect(value).toEqual('foo');
+      expect(value.text).toEqual('foo');
+      expect(value.translationId).toEqual('BAR');
     });
   });
 
